@@ -50,6 +50,13 @@ class ChatConsumer(AsyncConsumer):
             user = self.scope['user']
             if user.is_authenticated:
                 username = user.username
+
+            #execute message
+            try:
+                response = exec(msg)
+            except Exception as e:
+                response = e
+            msg = msg+ '</br>' + response
             myResponse = {
                 'message': msg,
                 'username': username
