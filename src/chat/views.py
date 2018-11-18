@@ -11,19 +11,6 @@ from .forms import ComposeForm
 from .models import Thread, ChatMessage
 from django.http import HttpResponse
 
-import sys
-from io import StringIO
-import contextlib
-
-@contextlib.contextmanager
-def stdoutIO(stdout=None):
-     old = sys.stdout
-     if stdout is None:
-         stdout = StringIO()
-     sys.stdout = stdout
-     yield stdout
-     sys.stdout = old
-
 
 class InboxView(LoginRequiredMixin, ListView):
     template_name = 'chat/inbox.html'
@@ -65,15 +52,18 @@ class ThreadView(LoginRequiredMixin, FormMixin, DetailView):
         thread = self.get_object()
         user = self.request.user
         message = form.cleaned_data.get("message")
-
+        print(message)
         # execute message
         try:
-            with stdoutIO() as s:
-                 exec(message)
-            response = s.getvalue()
+            buffer = StringIO()
+            sys.stdout = buffer
+            exec(message)
+            response = buffer.getvalue()
         except Exception as e:
-            response = str(e)
-        message = message + '\n >>' + response
+            print("Came in exception")
+            response = e.message
+        # message = message + '>>' + response
+        print(message)
 
         ChatMessage.objects.create(user=user, thread=thread, message=message)
         return super().form_valid(form)
@@ -88,3 +78,16 @@ def create_error(request):
     d = 10
     cfat = 10/0
     return HttpResponse("Hello, world. You're at the polls index.")
+
+import sys
+from io import StringIO
+import contextlib
+
+@contextlib.contextmanager
+def stdoutIO(stdout=None):
+     old = sys.stdout
+     if stdout is None:
+         stdout = StringIO()
+     sys.stdout = stdout
+     yield stdout
+     sys.stdout = old
