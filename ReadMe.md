@@ -42,6 +42,8 @@ ipdb>
 
 **As you can see the above shell opens up only if the error occured and you can get the context in trace object.**
 
+url which caused the error: http://127.0.0.1:8000/create_error/ 
+
 ```python
 [ Top 10 differences ]
 /home/ude/django_trace/src/chat/decorators.py:6: size=136 B (+136 B), count=1 (+1), average=136 B
