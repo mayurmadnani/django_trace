@@ -3,11 +3,13 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic.edit import FormMixin
+from chat.decorators import track_mem
 
 from django.views.generic import DetailView, ListView
 
 from .forms import ComposeForm
 from .models import Thread, ChatMessage
+from django.http import HttpResponse
 
 
 class InboxView(LoginRequiredMixin, ListView):
@@ -54,3 +56,9 @@ class ThreadView(LoginRequiredMixin, FormMixin, DetailView):
         return super().form_valid(form)
 
 
+
+@track_mem
+def create_error(request):
+    context_data = 'Hello'
+    cfat = 10/1
+    return HttpResponse("Hello, world. You're at the polls index.")

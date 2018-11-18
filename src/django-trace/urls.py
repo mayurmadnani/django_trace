@@ -16,9 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
+from chat.views import create_error
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="home.html")),
     path('admin/', admin.site.urls),
     path('messages/', include('chat.urls')),
+    path('create_error/', create_error),
 ]
