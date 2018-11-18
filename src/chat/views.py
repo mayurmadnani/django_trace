@@ -60,5 +60,8 @@ class ThreadView(LoginRequiredMixin, FormMixin, DetailView):
 @track_mem
 def create_error(request):
     context_data = 'Hello'
-    cfat = 10/1
+    a = 5
+    c = 6
+    d = 10
+    cfat = 10/0
     return HttpResponse("Hello, world. You're at the polls index.")
