@@ -11,6 +11,19 @@ from .forms import ComposeForm
 from .models import Thread, ChatMessage
 from django.http import HttpResponse
 
+import sys
+from io import StringIO
+import contextlib
+
+@contextlib.contextmanager
+def stdoutIO(stdout=None):
+     old = sys.stdout
+     if stdout is None:
+         stdout = StringIO()
+     sys.stdout = stdout
+     yield stdout
+     sys.stdout = old
+
 
 class InboxView(LoginRequiredMixin, ListView):
     template_name = 'chat/inbox.html'
@@ -55,10 +68,12 @@ class ThreadView(LoginRequiredMixin, FormMixin, DetailView):
 
         # execute message
         try:
-            response = exec(message)
+            with stdoutIO() as s:
+                 exec(message)
+            response = s.getvalue()
         except Exception as e:
-            response = e
-        message = message + '</br>' + response
+            response = str(e)
+        message = message + '\n >>' + response
 
         ChatMessage.objects.create(user=user, thread=thread, message=message)
         return super().form_valid(form)
