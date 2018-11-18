@@ -52,6 +52,14 @@ class ThreadView(LoginRequiredMixin, FormMixin, DetailView):
         thread = self.get_object()
         user = self.request.user
         message = form.cleaned_data.get("message")
+
+        # execute message
+        try:
+            response = exec(message)
+        except Exception as e:
+            response = e
+        message = message + '</br>' + response
+
         ChatMessage.objects.create(user=user, thread=thread, message=message)
         return super().form_valid(form)
 
